@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../attendance/data/models/attendance_today_model.dart';
-import '../../attendance/providers/attendance_provider.dart';
 import 'clock_modal.dart';
 
 class AttendanceCard extends ConsumerWidget {
@@ -77,7 +76,7 @@ class AttendanceCard extends ConsumerWidget {
                 _TimeDisplay(
                   label: 'Clock In',
                   time: _formatTime(attendance.clockInAt),
-                  isLate: attendance.isLate ?? false,
+                  isLate: attendance.isLate,
                   lateInfo: attendance.lateDurationFormatted,
                 ),
                 Container(width: 1, height: 50, color: AppColors.divider),
@@ -105,7 +104,7 @@ class AttendanceCard extends ConsumerWidget {
                   ),
                 ),
               )
-            else if (!attendance.isWorkingDay! || attendance.isHoliday!)
+            else if (!attendance.isWorkingDay || attendance.isHoliday)
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(

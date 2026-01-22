@@ -20,7 +20,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    // Delay the auth check to after the widget tree is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAuth();
+    });
   }
 
   Future<void> _checkAuth() async {

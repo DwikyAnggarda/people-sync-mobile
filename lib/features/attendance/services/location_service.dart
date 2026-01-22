@@ -2,8 +2,6 @@
 /// Handles GPS location and geofencing
 library;
 
-import 'dart:math';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -68,12 +66,17 @@ class LocationService {
     // Get position
     try {
       return await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 15),
-        ),
+        desiredAccuracy: LocationAccuracy.high,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw const LocationException(
+            message: 'Waktu habis saat mendapatkan lokasi. Silakan coba lagi.',
+          );
+        },
       );
     } catch (e) {
+      if (e is LocationException) rethrow;
       throw LocationException(
         message: 'Gagal mendapatkan lokasi. Silakan coba lagi.',
         originalError: e,
@@ -102,7 +105,7 @@ class LocationService {
     required List<OfficeLocationModel> offices,
   }) {
     if (offices.isEmpty) {
-      return GeofenceResult(
+      return const GeofenceResult(
         isWithinGeofence: false,
         nearestOffice: null,
         distance: 0,

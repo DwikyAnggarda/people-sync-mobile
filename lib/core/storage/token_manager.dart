@@ -53,7 +53,7 @@ class TokenManager {
     if (expiry == null) return true;
 
     final refreshThreshold = DateTime.now().add(
-      Duration(seconds: ApiConfig.tokenRefreshThresholdSeconds),
+      const Duration(seconds: ApiConfig.tokenRefreshThresholdSeconds),
     );
 
     return expiry.isBefore(refreshThreshold);

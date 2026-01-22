@@ -26,9 +26,8 @@ final apiClientProvider = Provider<ApiClient>((ref) {
 class ApiClient {
   late final Dio _dio;
   final TokenManager tokenManager;
-  final Ref _ref;
 
-  ApiClient({required this.tokenManager, required Ref ref}) : _ref = ref {
+  ApiClient({required this.tokenManager, required Ref ref}) {
     _dio = _createDio();
     _setupInterceptors();
   }

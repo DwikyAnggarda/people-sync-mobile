@@ -40,7 +40,6 @@ class ErrorInterceptor extends Interceptor {
         return const ServerException(message: 'Sertifikat server tidak valid');
 
       case DioExceptionType.unknown:
-      default:
         // Check if it's a connection error
         if (error.error.toString().contains('SocketException') ||
             error.error.toString().contains('Connection refused')) {

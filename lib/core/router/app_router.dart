@@ -11,35 +11,60 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/home/screens/home_screen.dart';
+import '../../features/leave/screens/leave_screen.dart';
 import '../../features/leave/screens/leave_form_screen.dart';
-import '../../features/leave/screens/leave_list_screen.dart';
+import '../../features/overtime/screens/overtime_screen.dart';
 import '../../features/overtime/screens/overtime_form_screen.dart';
-import '../../features/overtime/screens/overtime_list_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../widgets/main_scaffold.dart';
 
-/// Router provider
+/// Auth state notifier for router refresh
+class AuthChangeNotifier extends ChangeNotifier {
+  AuthChangeNotifier(this._ref) {
+    _ref.listen(authProvider, (_, __) {
+      notifyListeners();
+    });
+  }
+
+  final Ref _ref;
+}
+
+/// Router refresh notifier provider
+final routerRefreshProvider = Provider<AuthChangeNotifier>((ref) {
+  return AuthChangeNotifier(ref);
+});
+
+/// Router provider - creates router ONCE, refreshes via refreshListenable
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final refreshNotifier = ref.watch(routerRefreshProvider);
 
   return GoRouter(
     initialLocation: '/',
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false, // Disable to reduce console spam
+    refreshListenable: refreshNotifier,
     redirect: (context, state) {
+      // Read auth state inside redirect (not watch at provider level)
+      final container = ProviderScope.containerOf(context);
+      final authState = container.read(authProvider);
+
       final isAuthenticated = authState.isAuthenticated;
-      final isLoggingIn = state.matchedLocation == '/login';
-      final isSplash = state.matchedLocation == '/';
+      final isLoading = authState.isLoading;
+      final location = state.matchedLocation;
+      final isOnSplash = location == '/';
+      final isOnLogin = location == '/login';
 
-      // Allow splash screen to handle initial redirect
-      if (isSplash) return null;
+      // Don't redirect while loading or on splash screen
+      if (isLoading || isOnSplash) {
+        return null;
+      }
 
-      // Redirect to login if not authenticated
-      if (!isAuthenticated && !isLoggingIn) {
+      // Not authenticated and not on login -> go to login
+      if (!isAuthenticated && !isOnLogin) {
         return '/login';
       }
 
-      // Redirect to home if authenticated and trying to access login
-      if (isAuthenticated && isLoggingIn) {
+      // Authenticated and on login -> go to home
+      if (isAuthenticated && isOnLogin) {
         return '/home';
       }
 
@@ -82,7 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/leave',
             name: 'leave',
             pageBuilder: (context, state) =>
-                const NoTransitionPage(child: LeaveListScreen()),
+                const NoTransitionPage(child: LeaveScreen()),
             routes: [
               GoRoute(
                 path: 'new',
@@ -104,7 +129,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/overtime',
         name: 'overtime',
-        builder: (context, state) => const OvertimeListScreen(),
+        builder: (context, state) => const OvertimeScreen(),
         routes: [
           GoRoute(
             path: 'new',

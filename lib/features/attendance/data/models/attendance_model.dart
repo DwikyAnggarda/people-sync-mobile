@@ -14,7 +14,7 @@ class AttendanceModel {
   final String? clockInAt;
   @JsonKey(name: 'clock_out_at')
   final String? clockOutAt;
-  @JsonKey(name: 'is_late')
+  @JsonKey(name: 'is_late', defaultValue: false)
   final bool isLate;
   @JsonKey(name: 'late_duration_minutes')
   final int? lateDurationMinutes;
@@ -69,15 +69,15 @@ class AttendanceModel {
 /// Attendance Summary Model
 @JsonSerializable()
 class AttendanceSummaryModel {
-  @JsonKey(name: 'total_present')
+  @JsonKey(name: 'total_present', defaultValue: 0)
   final int totalPresent;
-  @JsonKey(name: 'total_late')
+  @JsonKey(name: 'total_late', defaultValue: 0)
   final int totalLate;
-  @JsonKey(name: 'total_absent')
+  @JsonKey(name: 'total_absent', defaultValue: 0)
   final int totalAbsent;
-  @JsonKey(name: 'total_leave')
+  @JsonKey(name: 'total_leave', defaultValue: 0)
   final int totalLeave;
-  @JsonKey(name: 'total_working_days')
+  @JsonKey(name: 'total_working_days', defaultValue: 0)
   final int totalWorkingDays;
 
   const AttendanceSummaryModel({

@@ -9,21 +9,22 @@ part 'attendance_today_model.g.dart';
 @JsonSerializable()
 class AttendanceTodayModel {
   final int? id;
+  @JsonKey(defaultValue: '')
   final String date;
   @JsonKey(name: 'clock_in_at')
   final String? clockInAt;
   @JsonKey(name: 'clock_out_at')
   final String? clockOutAt;
-  @JsonKey(name: 'is_working_day')
-  final bool? isWorkingDay;
-  @JsonKey(name: 'is_holiday')
-  final bool? isHoliday;
-  @JsonKey(name: 'can_clock_in')
+  @JsonKey(name: 'is_working_day', defaultValue: true)
+  final bool isWorkingDay;
+  @JsonKey(name: 'is_holiday', defaultValue: false)
+  final bool isHoliday;
+  @JsonKey(name: 'can_clock_in', defaultValue: false)
   final bool canClockIn;
-  @JsonKey(name: 'can_clock_out')
+  @JsonKey(name: 'can_clock_out', defaultValue: false)
   final bool canClockOut;
-  @JsonKey(name: 'is_late')
-  final bool? isLate;
+  @JsonKey(name: 'is_late', defaultValue: false)
+  final bool isLate;
   @JsonKey(name: 'late_duration_minutes')
   final int? lateDurationMinutes;
   @JsonKey(name: 'late_duration_formatted')
@@ -36,11 +37,11 @@ class AttendanceTodayModel {
     required this.date,
     this.clockInAt,
     this.clockOutAt,
-    this.isWorkingDay,
-    this.isHoliday,
+    required this.isWorkingDay,
+    required this.isHoliday,
     required this.canClockIn,
     required this.canClockOut,
-    this.isLate,
+    required this.isLate,
     this.lateDurationMinutes,
     this.lateDurationFormatted,
     this.workSchedule,
@@ -71,9 +72,9 @@ class AttendanceTodayModel {
 
 @JsonSerializable()
 class WorkScheduleModel {
-  @JsonKey(name: 'work_start_time')
+  @JsonKey(name: 'work_start_time', defaultValue: '08:00')
   final String workStartTime;
-  @JsonKey(name: 'work_end_time')
+  @JsonKey(name: 'work_end_time', defaultValue: '17:00')
   final String workEndTime;
 
   const WorkScheduleModel({
